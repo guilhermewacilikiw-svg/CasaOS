@@ -1,14 +1,16 @@
 import os
 from openai import OpenAI
-from pydantic import BaseModel
 import json
 
-# Instancia o cliente da OpenAI. Espera-se que OPENAI_API_KEY esteja configurada no .env
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", "sk-placeholder-key"))
+# Instancia o cliente da OpenAI apontando para a base_url do Groq
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY", "gsk_placeholder"),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 def process_receipt_image(image_url: str) -> dict:
     """
-    Envia a URL da imagem da nota fiscal para o modelo de Visão da OpenAI
+    Envia a URL da imagem da nota fiscal para o modelo de Visão do Groq
     e retorna um JSON estruturado com os dados extraídos.
     """
     prompt = """
@@ -28,7 +30,7 @@ def process_receipt_image(image_url: str) -> dict:
     """
     
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="llama-3.2-11b-vision-preview",
         messages=[
             {
                 "role": "user",
@@ -42,6 +44,12 @@ def process_receipt_image(image_url: str) -> dict:
     )
     
     raw_json = response.choices[0].message.content
+    # Clean markdown if present
+    if raw_json.startswith("```json"):
+        raw_json = raw_json[7:-3]
+    elif raw_json.startswith("```"):
+        raw_json = raw_json[3:-3]
+        
     try:
         return json.loads(raw_json)
     except Exception as e:
@@ -60,7 +68,7 @@ def chat_with_house_context(user_message: str, home_context: str) -> str:
     """
     
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="llama-3.3-70b-versatile",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
