@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, FlatList, ActivityIndicator, KeyboardAvoidingView, Platform, StyleSheet } from 'react-native';
 
 export function ChatScreen() {
   const [messages, setMessages] = useState<any[]>([
@@ -40,49 +40,133 @@ export function ChatScreen() {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      className="flex-1 bg-background pt-12"
+      style={styles.container}
     >
-      <View className="px-6 mb-4">
-        <Text className="text-3xl font-bold text-primary">Chat CasaOS</Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>Chat CasaOS</Text>
       </View>
 
       <FlatList
-        className="px-6"
+        style={styles.messageList}
+        contentContainerStyle={styles.messageListContent}
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View className={`mb-4 p-4 rounded-2xl max-w-[85%] ${
-            item.role === 'user' 
-              ? 'bg-primary self-end rounded-tr-none' 
-              : 'bg-surface self-start rounded-tl-none border border-gray-100'
-          }`}>
-            <Text className={`text-base ${item.role === 'user' ? 'text-white' : 'text-primary'}`}>
+          <View style={[
+            styles.messageBubble,
+            item.role === 'user' ? styles.userBubble : styles.systemBubble
+          ]}>
+            <Text style={[
+              styles.messageText,
+              item.role === 'user' ? styles.userText : styles.systemText
+            ]}>
               {item.text}
             </Text>
           </View>
         )}
       />
 
-      <View className="p-6 bg-white border-t border-gray-100 flex-row items-center">
+      <View style={styles.inputContainer}>
         <TextInput
-          className="flex-1 bg-surface px-4 py-3 rounded-2xl text-primary mr-3 max-h-32"
+          style={styles.input}
           placeholder="Pergunte sobre as compras, tarefas..."
           value={input}
           onChangeText={setInput}
           multiline
         />
         <TouchableOpacity 
-          className="bg-primary w-12 h-12 rounded-full items-center justify-center"
+          style={styles.sendButton}
           onPress={sendMessage}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text className="text-white text-xl">→</Text>
+            <Text style={styles.sendButtonText}>→</Text>
           )}
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingTop: 48,
+  },
+  header: {
+    paddingHorizontal: 24,
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  messageList: {
+    flex: 1,
+  },
+  messageListContent: {
+    paddingHorizontal: 24,
+    paddingBottom: 24,
+  },
+  messageBubble: {
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 16,
+    maxWidth: '85%',
+  },
+  userBubble: {
+    backgroundColor: '#0F172A',
+    alignSelf: 'flex-end',
+    borderTopRightRadius: 0,
+  },
+  systemBubble: {
+    backgroundColor: '#FFFFFF',
+    alignSelf: 'flex-start',
+    borderTopLeftRadius: 0,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  messageText: {
+    fontSize: 16,
+  },
+  userText: {
+    color: '#FFFFFF',
+  },
+  systemText: {
+    color: '#0F172A',
+  },
+  inputContainer: {
+    padding: 24,
+    backgroundColor: '#FFFFFF',
+    borderTopWidth: 1,
+    borderTopColor: '#F1F5F9',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 16,
+    color: '#0F172A',
+    marginRight: 12,
+    maxHeight: 128,
+  },
+  sendButton: {
+    backgroundColor: '#0F172A',
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sendButtonText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+  },
+});

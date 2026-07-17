@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function LoginScreen({ navigation }: any) {
@@ -19,17 +19,17 @@ export function LoginScreen({ navigation }: any) {
   }
 
   return (
-    <View className="flex-1 bg-background justify-center px-6">
-      <View className="mb-12">
-        <Text className="text-4xl font-bold text-primary mb-2">CasaOS</Text>
-        <Text className="text-lg text-secondary">Gerencie sua casa de forma inteligente.</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>CasaOS</Text>
+        <Text style={styles.subtitle}>Gerencie sua casa de forma inteligente.</Text>
       </View>
 
-      <View className="space-y-4">
-        <View>
-          <Text className="text-sm font-medium text-secondary mb-1">E-mail</Text>
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>E-mail</Text>
           <TextInput
-            className="w-full bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary"
+            style={styles.input}
             placeholder="Digite seu e-mail"
             value={email}
             onChangeText={setEmail}
@@ -38,10 +38,10 @@ export function LoginScreen({ navigation }: any) {
           />
         </View>
 
-        <View>
-          <Text className="text-sm font-medium text-secondary mb-1">Senha</Text>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Senha</Text>
           <TextInput
-            className="w-full bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary"
+            style={styles.input}
             placeholder="Sua senha secreta"
             value={password}
             onChangeText={setPassword}
@@ -50,24 +50,90 @@ export function LoginScreen({ navigation }: any) {
         </View>
 
         <TouchableOpacity 
-          className="w-full bg-primary py-4 rounded-xl items-center mt-4"
+          style={styles.button}
           onPress={signInWithEmail}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-bold text-lg">Entrar</Text>
+            <Text style={styles.buttonText}>Entrar</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity 
-          className="w-full items-center mt-2"
+          style={styles.linkButton}
           onPress={() => navigation.navigate('Register')}
         >
-          <Text className="text-accent font-medium">Ainda não tem conta? Criar agora</Text>
+          <Text style={styles.linkText}>Ainda não tem conta? Criar agora</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  header: {
+    marginBottom: 48,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#64748B',
+  },
+  formContainer: {
+    gap: 16,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#64748B',
+    marginBottom: 4,
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    color: '#0F172A',
+  },
+  button: {
+    width: '100%',
+    backgroundColor: '#0F172A',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  linkButton: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  linkText: {
+    color: '#0EA5E9',
+    fontWeight: '500',
+  },
+});

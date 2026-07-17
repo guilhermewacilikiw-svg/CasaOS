@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function TasksScreen() {
@@ -66,26 +66,26 @@ export function TasksScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background pt-12 px-6">
-      <View className="flex-row justify-between items-center mb-8">
-        <Text className="text-3xl font-bold text-primary">Tarefas</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Tarefas</Text>
         <TouchableOpacity onPress={() => supabase.auth.signOut()}>
-          <Text className="text-danger font-medium">Sair</Text>
+          <Text style={styles.logoutText}>Sair</Text>
         </TouchableOpacity>
       </View>
 
-      <View className="flex-row mb-6">
+      <View style={styles.inputContainer}>
         <TextInput
-          className="flex-1 bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary mr-2"
+          style={styles.input}
           placeholder="Nova tarefa..."
           value={newTaskTitle}
           onChangeText={setNewTaskTitle}
         />
         <TouchableOpacity 
-          className="bg-primary px-6 rounded-xl justify-center items-center"
+          style={styles.addButton}
           onPress={handleAddTask}
         >
-          <Text className="text-white font-bold">+</Text>
+          <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
       </View>
 
@@ -97,24 +97,121 @@ export function TasksScreen() {
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <TouchableOpacity 
-              className="flex-row items-center bg-surface p-4 rounded-xl mb-3"
+              style={styles.taskCard}
               onPress={() => toggleTaskStatus(item)}
             >
-              <View className={`w-6 h-6 rounded-full border-2 mr-4 items-center justify-center
-                ${item.status === 'completed' ? 'bg-success border-success' : 'border-gray-300'}`}
-              >
-                {item.status === 'completed' && <Text className="text-white text-xs">✓</Text>}
+              <View style={[
+                styles.checkbox,
+                item.status === 'completed' ? styles.checkboxCompleted : styles.checkboxPending
+              ]}>
+                {item.status === 'completed' && <Text style={styles.checkmark}>✓</Text>}
               </View>
-              <Text className={`text-lg ${item.status === 'completed' ? 'text-secondary line-through' : 'text-primary'}`}>
+              <Text style={[
+                styles.taskTitle,
+                item.status === 'completed' && styles.taskTitleCompleted
+              ]}>
                 {item.title}
               </Text>
             </TouchableOpacity>
           )}
           ListEmptyComponent={
-            <Text className="text-secondary text-center mt-10">Nenhuma tarefa encontrada.</Text>
+            <Text style={styles.emptyText}>Nenhuma tarefa encontrada.</Text>
           }
         />
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingTop: 48,
+    paddingHorizontal: 24,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  logoutText: {
+    color: '#EF4444',
+    fontWeight: '500',
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    marginBottom: 24,
+  },
+  input: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    color: '#0F172A',
+    marginRight: 8,
+  },
+  addButton: {
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  taskCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  checkbox: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    marginRight: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  checkboxPending: {
+    borderColor: '#CBD5E1',
+  },
+  checkboxCompleted: {
+    backgroundColor: '#10B981',
+    borderColor: '#10B981',
+  },
+  checkmark: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  taskTitle: {
+    fontSize: 18,
+    color: '#0F172A',
+  },
+  taskTitleCompleted: {
+    color: '#64748B',
+    textDecorationLine: 'line-through',
+  },
+  emptyText: {
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 40,
+  },
+});

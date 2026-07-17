@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, ActivityIndicator, ScrollView, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function FinanceScreen() {
@@ -75,65 +75,195 @@ export function FinanceScreen() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background pt-12 px-6">
-      <View className="mb-8">
-        <Text className="text-3xl font-bold text-primary">Finanças</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Finanças</Text>
       </View>
 
       {/* Card de Divisão de Contas (Módulo 10) */}
-      <View className="bg-primary p-6 rounded-2xl mb-8">
-        <Text className="text-white text-lg font-bold mb-2">Divisão do Mês (50/50)</Text>
-        <Text className="text-white text-3xl font-bold mb-1">R$ {balances.memberA.toFixed(2)}</Text>
-        <Text className="text-gray-300 text-sm">Gasto total da casa</Text>
+      <View style={styles.financeCard}>
+        <Text style={styles.financeLabel}>Divisão do Mês (50/50)</Text>
+        <Text style={styles.financeValue}>R$ {balances.memberA.toFixed(2)}</Text>
+        <Text style={styles.financeSubtext}>Gasto total da casa</Text>
         
-        <View className="mt-4 pt-4 border-t border-gray-700">
-          <Text className="text-white text-base">Evelyn deve transferir:</Text>
-          <Text className="text-accent text-xl font-bold mt-1">R$ {balances.memberB.toFixed(2)}</Text>
+        <View style={styles.financeDivider}>
+          <Text style={styles.financeSubLabel}>Evelyn deve transferir:</Text>
+          <Text style={styles.financeSubValue}>R$ {balances.memberB.toFixed(2)}</Text>
         </View>
       </View>
 
-      <Text className="text-xl font-bold text-primary mb-4">Adicionar Despesa</Text>
-      <View className="flex-row mb-6">
+      <Text style={styles.sectionTitle}>Adicionar Despesa</Text>
+      <View style={styles.inputContainer}>
         <TextInput
-          className="flex-1 bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary mr-2"
+          style={[styles.input, styles.inputDesc]}
           placeholder="Ex: Luz"
           value={description}
           onChangeText={setDescription}
         />
         <TextInput
-          className="w-24 bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary mr-2"
+          style={[styles.input, styles.inputAmount]}
           placeholder="R$"
           keyboardType="numeric"
           value={amount}
           onChangeText={setAmount}
         />
         <TouchableOpacity 
-          className="bg-primary px-6 rounded-xl justify-center items-center"
+          style={styles.addButton}
           onPress={handleAddTransaction}
         >
-          <Text className="text-white font-bold">+</Text>
+          <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
       </View>
 
-      <Text className="text-xl font-bold text-primary mb-4">Histórico</Text>
+      <Text style={styles.sectionTitle}>Histórico</Text>
       {loading ? (
         <ActivityIndicator size="large" color="#000000" />
       ) : (
-        <View className="pb-10">
+        <View style={styles.historyContainer}>
           {transactions.map((item) => (
-            <View key={item.id} className="flex-row justify-between items-center bg-surface p-4 rounded-xl mb-3 border-l-4 border-danger">
+            <View key={item.id} style={styles.historyCard}>
               <View>
-                <Text className="text-lg font-bold text-primary">{item.description}</Text>
-                <Text className="text-xs text-secondary">{new Date(item.created_at).toLocaleDateString()}</Text>
+                <Text style={styles.historyTitle}>{item.description}</Text>
+                <Text style={styles.historyDate}>{new Date(item.created_at).toLocaleDateString()}</Text>
               </View>
-              <Text className="text-lg font-bold text-danger">R$ {Number(item.amount).toFixed(2)}</Text>
+              <Text style={styles.historyAmount}>R$ {Number(item.amount).toFixed(2)}</Text>
             </View>
           ))}
           {transactions.length === 0 && (
-            <Text className="text-secondary text-center mt-4">Nenhuma despesa registrada.</Text>
+            <Text style={styles.emptyText}>Nenhuma despesa registrada.</Text>
           )}
         </View>
       )}
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+  scrollContent: {
+    paddingTop: 48,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  header: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  financeCard: {
+    backgroundColor: '#0F172A',
+    padding: 24,
+    borderRadius: 16,
+    marginBottom: 32,
+  },
+  financeLabel: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  financeValue: {
+    color: '#FFFFFF',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  financeSubtext: {
+    color: '#CBD5E1',
+    fontSize: 14,
+  },
+  financeDivider: {
+    borderTopWidth: 1,
+    borderTopColor: '#334155',
+    paddingTop: 16,
+    marginTop: 16,
+  },
+  financeSubLabel: {
+    color: '#FFFFFF',
+    fontSize: 16,
+  },
+  financeSubValue: {
+    color: '#0EA5E9',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 4,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 16,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    marginBottom: 24,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    color: '#0F172A',
+    marginRight: 8,
+  },
+  inputDesc: {
+    flex: 1,
+  },
+  inputAmount: {
+    width: 96,
+  },
+  addButton: {
+    backgroundColor: '#0F172A',
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addButtonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  historyContainer: {
+    paddingBottom: 40,
+  },
+  historyCard: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#EF4444',
+  },
+  historyTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  historyDate: {
+    fontSize: 12,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  historyAmount: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#EF4444',
+  },
+  emptyText: {
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 16,
+  },
+});

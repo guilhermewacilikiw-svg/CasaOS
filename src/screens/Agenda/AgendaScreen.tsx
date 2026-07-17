@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function AgendaScreen() {
@@ -20,7 +20,7 @@ export function AgendaScreen() {
       const { data: tasks } = await supabase.from('tasks').select('*').eq('status', 'pending');
       const { data: bills } = await supabase.from('financial_transactions').select('*').eq('status', 'pending');
       
-      const combined = [];
+      const combined: any[] = [];
       if (tasks) {
         tasks.forEach(t => combined.push({ id: `t_${t.id}`, type: 'Tarefa', title: t.title, date: t.due_date || 'Hoje' }));
       }
@@ -37,10 +37,10 @@ export function AgendaScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background pt-12 px-6">
-      <View className="mb-8">
-        <Text className="text-3xl font-bold text-primary">Agenda</Text>
-        <Text className="text-secondary mt-1">Seus compromissos e tarefas unificados.</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Agenda</Text>
+        <Text style={styles.subtitle}>Seus compromissos e tarefas unificados.</Text>
       </View>
 
       {loading ? (
@@ -50,19 +50,75 @@ export function AgendaScreen() {
           data={items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View className="flex-row items-center bg-surface p-4 rounded-xl mb-3 border-l-4 border-accent">
-              <View className="flex-1">
-                <Text className="text-xs font-bold text-accent mb-1">{item.type}</Text>
-                <Text className="text-lg font-bold text-primary">{item.title}</Text>
+            <View style={styles.card}>
+              <View style={styles.cardContent}>
+                <Text style={styles.cardType}>{item.type}</Text>
+                <Text style={styles.cardTitle}>{item.title}</Text>
               </View>
-              <Text className="text-sm text-secondary font-medium">{item.date}</Text>
+              <Text style={styles.cardDate}>{item.date}</Text>
             </View>
           )}
           ListEmptyComponent={
-            <Text className="text-secondary text-center mt-10">Agenda livre para hoje!</Text>
+            <Text style={styles.emptyText}>Agenda livre para hoje!</Text>
           }
         />
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingTop: 48,
+    paddingHorizontal: 24,
+  },
+  header: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#64748B',
+    marginTop: 4,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: '#0EA5E9',
+  },
+  cardContent: {
+    flex: 1,
+  },
+  cardType: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#0EA5E9',
+    marginBottom: 4,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  cardDate: {
+    fontSize: 14,
+    color: '#64748B',
+    fontWeight: '500',
+  },
+  emptyText: {
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 40,
+  },
+});

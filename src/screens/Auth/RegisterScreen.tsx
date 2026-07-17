@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function RegisterScreen({ navigation }: any) {
@@ -25,9 +25,6 @@ export function RegisterScreen({ navigation }: any) {
     if (error) {
       Alert.alert('Erro', error.message);
     } else {
-      // Nota: A tabela public.profiles idealmente seria preenchida via 
-      // uma Trigger no Postgres ao criar o user na Auth,
-      // ou manualmente aqui após o signUp com sucesso.
       Alert.alert('Sucesso', 'Conta criada com sucesso! Por favor, faça login.');
       navigation.navigate('Login');
     }
@@ -36,17 +33,17 @@ export function RegisterScreen({ navigation }: any) {
   }
 
   return (
-    <View className="flex-1 bg-background justify-center px-6">
-      <View className="mb-10">
-        <Text className="text-3xl font-bold text-primary mb-2">Criar Conta</Text>
-        <Text className="text-base text-secondary">Bem-vindo(a) ao CasaOS</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Criar Conta</Text>
+        <Text style={styles.subtitle}>Bem-vindo(a) ao CasaOS</Text>
       </View>
 
-      <View className="space-y-4">
-        <View>
-          <Text className="text-sm font-medium text-secondary mb-1">Nome Completo</Text>
+      <View style={styles.formContainer}>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Nome Completo</Text>
           <TextInput
-            className="w-full bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary"
+            style={styles.input}
             placeholder="Como você se chama?"
             value={fullName}
             onChangeText={setFullName}
@@ -54,10 +51,10 @@ export function RegisterScreen({ navigation }: any) {
           />
         </View>
 
-        <View>
-          <Text className="text-sm font-medium text-secondary mb-1">E-mail</Text>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>E-mail</Text>
           <TextInput
-            className="w-full bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary"
+            style={styles.input}
             placeholder="Digite seu e-mail"
             value={email}
             onChangeText={setEmail}
@@ -66,10 +63,10 @@ export function RegisterScreen({ navigation }: any) {
           />
         </View>
 
-        <View>
-          <Text className="text-sm font-medium text-secondary mb-1">Senha</Text>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Senha</Text>
           <TextInput
-            className="w-full bg-surface px-4 py-3 rounded-xl border border-gray-200 text-primary"
+            style={styles.input}
             placeholder="Crie uma senha forte"
             value={password}
             onChangeText={setPassword}
@@ -78,24 +75,90 @@ export function RegisterScreen({ navigation }: any) {
         </View>
 
         <TouchableOpacity 
-          className="w-full bg-primary py-4 rounded-xl items-center mt-6"
+          style={styles.button}
           onPress={signUpWithEmail}
           disabled={loading}
         >
           {loading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white font-bold text-lg">Criar Conta</Text>
+            <Text style={styles.buttonText}>Criar Conta</Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity 
-          className="w-full items-center mt-4"
+          style={styles.linkButton}
           onPress={() => navigation.goBack()}
         >
-          <Text className="text-secondary font-medium">Já tem uma conta? Entrar</Text>
+          <Text style={styles.linkText}>Já tem uma conta? Entrar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    justifyContent: 'center',
+    paddingHorizontal: 24,
+  },
+  header: {
+    marginBottom: 40,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#64748B',
+  },
+  formContainer: {
+    gap: 16,
+  },
+  inputGroup: {
+    marginBottom: 16,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#64748B',
+    marginBottom: 4,
+  },
+  input: {
+    width: '100%',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    color: '#0F172A',
+  },
+  button: {
+    width: '100%',
+    backgroundColor: '#0F172A',
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginTop: 24,
+  },
+  buttonText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  linkButton: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  linkText: {
+    color: '#64748B',
+    fontWeight: '500',
+  },
+});

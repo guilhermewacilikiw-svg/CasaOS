@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function DashboardScreen({ navigation }: any) {
@@ -54,65 +54,175 @@ export function DashboardScreen({ navigation }: any) {
 
   if (loading) {
     return (
-      <View className="flex-1 bg-background justify-center items-center">
+      <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#000000" />
       </View>
     );
   }
 
   return (
-    <ScrollView className="flex-1 bg-background pt-12 px-6">
-      <View className="mb-8">
-        <Text className="text-secondary text-lg">Bom dia,</Text>
-        <Text className="text-4xl font-bold text-primary">{data.userName}</Text>
+    <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.header}>
+        <Text style={styles.greeting}>Bom dia,</Text>
+        <Text style={styles.userName}>{data.userName}</Text>
       </View>
 
-      <Text className="text-xl font-bold text-primary mb-4">Hoje na casa</Text>
+      <Text style={styles.sectionTitle}>Hoje na casa</Text>
 
       {/* Cards Rápidos */}
-      <View className="flex-row justify-between mb-4">
+      <View style={styles.quickCardsContainer}>
         <TouchableOpacity 
-          className="bg-surface w-[48%] p-4 rounded-2xl border border-gray-100"
+          style={styles.quickCard}
           onPress={() => navigation.navigate('Tarefas')}
         >
-          <Text className="text-3xl font-bold text-primary">{data.pendingTasks}</Text>
-          <Text className="text-secondary text-sm mt-1">Tarefas{'\n'}pendentes</Text>
+          <Text style={styles.quickCardValue}>{data.pendingTasks}</Text>
+          <Text style={styles.quickCardLabel}>Tarefas{'\n'}pendentes</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
-          className="bg-surface w-[48%] p-4 rounded-2xl border border-gray-100"
+          style={styles.quickCard}
           onPress={() => navigation.navigate('Compras')}
         >
-          <Text className="text-3xl font-bold text-primary">{data.shoppingItems}</Text>
-          <Text className="text-secondary text-sm mt-1">Itens de mercado{'\n'}faltando</Text>
+          <Text style={styles.quickCardValue}>{data.shoppingItems}</Text>
+          <Text style={styles.quickCardLabel}>Itens de mercado{'\n'}faltando</Text>
         </TouchableOpacity>
       </View>
 
       {/* Finanças */}
-      <Text className="text-xl font-bold text-primary mb-4 mt-4">Resumo Financeiro</Text>
+      <Text style={[styles.sectionTitle, styles.marginTop]}>Resumo Financeiro</Text>
       <TouchableOpacity 
-        className="bg-primary p-6 rounded-2xl mb-8"
+        style={styles.financeCard}
         onPress={() => navigation.navigate('Finanças')}
       >
-        <Text className="text-gray-300 text-sm">Gasto do Mês</Text>
-        <Text className="text-white text-3xl font-bold mb-4">R$ {data.monthExpenses.toFixed(2)}</Text>
+        <Text style={styles.financeLabel}>Gasto do Mês</Text>
+        <Text style={styles.financeValue}>R$ {data.monthExpenses.toFixed(2)}</Text>
         
-        <View className="border-t border-gray-700 pt-4">
-          <Text className="text-white text-sm">Evelyn deve transferir:</Text>
-          <Text className="text-accent text-lg font-bold">R$ {data.balances.memberB.toFixed(2)}</Text>
+        <View style={styles.financeDivider}>
+          <Text style={styles.financeSubLabel}>Evelyn deve transferir:</Text>
+          <Text style={styles.financeSubValue}>R$ {data.balances.memberB.toFixed(2)}</Text>
         </View>
       </TouchableOpacity>
 
       {/* Alerta da IA */}
-      <Text className="text-xl font-bold text-primary mb-4">Alerta Inteligente</Text>
+      <Text style={styles.sectionTitle}>Alerta Inteligente</Text>
       <TouchableOpacity 
-        className="bg-[#EEF2FF] p-4 rounded-2xl mb-10 border border-[#C7D2FE]"
+        style={styles.aiAlertCard}
         onPress={() => navigation.navigate('Chat AI')}
       >
-        <Text className="text-accent text-sm font-bold mb-1">🤖 CasaOS AI</Text>
-        <Text className="text-primary text-base">Parece que o Feijão está acabando. Deseja que eu adicione à lista do mercado?</Text>
+        <Text style={styles.aiAlertTitle}>🤖 CasaOS AI</Text>
+        <Text style={styles.aiAlertText}>Parece que o Feijão está acabando. Deseja que eu adicione à lista do mercado?</Text>
       </TouchableOpacity>
 
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+  },
+  scrollContent: {
+    paddingTop: 48,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  header: {
+    marginBottom: 32,
+  },
+  greeting: {
+    color: '#64748B',
+    fontSize: 18,
+  },
+  userName: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#0F172A',
+    marginBottom: 16,
+  },
+  marginTop: {
+    marginTop: 16,
+  },
+  quickCardsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  quickCard: {
+    backgroundColor: '#FFFFFF',
+    width: '48%',
+    padding: 16,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#F1F5F9',
+  },
+  quickCardValue: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  quickCardLabel: {
+    color: '#64748B',
+    fontSize: 14,
+    marginTop: 4,
+  },
+  financeCard: {
+    backgroundColor: '#0F172A',
+    padding: 24,
+    borderRadius: 16,
+    marginBottom: 32,
+  },
+  financeLabel: {
+    color: '#CBD5E1',
+    fontSize: 14,
+  },
+  financeValue: {
+    color: '#FFFFFF',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  financeDivider: {
+    borderTopWidth: 1,
+    borderTopColor: '#334155',
+    paddingTop: 16,
+  },
+  financeSubLabel: {
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  financeSubValue: {
+    color: '#0EA5E9',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  aiAlertCard: {
+    backgroundColor: '#EEF2FF',
+    padding: 16,
+    borderRadius: 16,
+    marginBottom: 40,
+    borderWidth: 1,
+    borderColor: '#C7D2FE',
+  },
+  aiAlertTitle: {
+    color: '#0EA5E9',
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  aiAlertText: {
+    color: '#0F172A',
+    fontSize: 16,
+  },
+});

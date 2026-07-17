@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 import { supabase } from '../../services/supabase';
 
 export function InventoryScreen() {
@@ -42,10 +42,10 @@ export function InventoryScreen() {
   }
 
   return (
-    <View className="flex-1 bg-background pt-12 px-6">
-      <View className="mb-8">
-        <Text className="text-3xl font-bold text-primary">Estoque da Casa</Text>
-        <Text className="text-secondary mt-1">Sua despensa controlada automaticamente.</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>Estoque da Casa</Text>
+        <Text style={styles.subtitle}>Sua despensa controlada automaticamente.</Text>
       </View>
 
       {loading ? (
@@ -57,22 +57,85 @@ export function InventoryScreen() {
           renderItem={({ item }) => {
             const isLow = Number(item.quantity) <= Number(item.minimum_threshold);
             return (
-              <View className="flex-row items-center bg-surface p-4 rounded-xl mb-3">
-                <View className="flex-1">
-                  <Text className="text-lg font-bold text-primary">{item.product_name}</Text>
-                  <Text className="text-sm text-secondary">Mínimo ideal: {item.minimum_threshold}</Text>
+              <View style={styles.card}>
+                <View style={styles.cardInfo}>
+                  <Text style={styles.productName}>{item.product_name}</Text>
+                  <Text style={styles.minimumThreshold}>Mínimo ideal: {item.minimum_threshold}</Text>
                 </View>
-                <View className={`px-4 py-2 rounded-lg ${isLow ? 'bg-danger' : 'bg-primary'}`}>
-                  <Text className="text-white font-bold">{item.quantity} {item.unit}</Text>
+                <View style={[styles.quantityBadge, isLow ? styles.badgeDanger : styles.badgeNormal]}>
+                  <Text style={styles.quantityText}>{item.quantity} {item.unit}</Text>
                 </View>
               </View>
             );
           }}
           ListEmptyComponent={
-            <Text className="text-secondary text-center mt-10">Nenhum produto no estoque ainda.</Text>
+            <Text style={styles.emptyText}>Nenhum produto no estoque ainda.</Text>
           }
         />
       )}
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#F8FAFC',
+    paddingTop: 48,
+    paddingHorizontal: 24,
+  },
+  header: {
+    marginBottom: 32,
+  },
+  title: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#64748B',
+    marginTop: 4,
+  },
+  card: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
+  },
+  cardInfo: {
+    flex: 1,
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#0F172A',
+  },
+  minimumThreshold: {
+    fontSize: 14,
+    color: '#64748B',
+    marginTop: 2,
+  },
+  quantityBadge: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  badgeNormal: {
+    backgroundColor: '#0F172A',
+  },
+  badgeDanger: {
+    backgroundColor: '#EF4444',
+  },
+  quantityText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+  },
+  emptyText: {
+    color: '#64748B',
+    textAlign: 'center',
+    marginTop: 40,
+  },
+});
